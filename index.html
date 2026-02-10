@@ -1,14 +1,32 @@
 <style>
-  .sim-wrap{
-  background:
-    radial-gradient(900px 600px at 15% -10%, #3a2a7a 0, transparent 60%),
-    radial-gradient(900px 600px at 85% 110%, #361e74 0, transparent 60%),
-    linear-gradient(180deg,#2b101b,#2a1758);
-  padding: 20px;
-  border-radius: 16px;
+  @font-face{
+    font-family: "Quasimoda";
+    src: url("fonts/Quasimoda-Medium.woff2") format("woff2");
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face{
+    font-family: "Quasimoda";
+    src: url("fonts/Quasimoda-Bold.woff2") format("woff2");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
 
-  margin-top: 120px;   /* <-- add this */
-}
+  /* ===== Simulator wrapper ===== */
+  .sim-wrap{
+    /* Apply Quasimoda ONLY to simulator */
+    font-family: "Quasimoda", Arial, sans-serif;
+
+    background:
+      radial-gradient(900px 600px at 15% -10%, #3a2a7a 0, transparent 60%),
+      radial-gradient(900px 600px at 85% 110%, #361e74 0, transparent 60%),
+      linear-gradient(180deg,#2b101b,#2a1758);
+    padding: 20px;
+    border-radius: 16px;
+    margin-top: 120px;   /* <-- keep or adjust */
+  }
 </style>
 
 <div class="sim-wrap">
@@ -33,36 +51,54 @@
     border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);
     padding:16px; color: var(--text);
   }
-  h2{margin:0 0 10px;font-size:30px;letter-spacing:.2px; line-height:1.15}
-p.sub{margin:0 0 14px;color:var(--muted);font-size:16px; line-height:1.35}
+
+  /* Use Quasimoda weights explicitly */
+  h2{
+    margin:0 0 10px;
+    font-size:30px;
+    letter-spacing:.2px;
+    line-height:1.15;
+    font-weight:700; /* Bold face */
+  }
+  p.sub{
+    margin:0 0 14px;
+    color:var(--muted);
+    font-size:16px;
+    line-height:1.35;
+    font-weight:500; /* Medium face */
+  }
+
   .grid{display:grid;gap:12px}
   .row{
-  display:grid;
-  grid-template-columns: 1fr auto;   /* label | % */
-  grid-template-areas:
-    "label pct"
-    "slider slider";
-  gap: 8px 12px;
-  align-items:center;
-}
+    display:grid;
+    grid-template-columns: 1fr auto;   /* label | % */
+    grid-template-areas:
+      "label pct"
+      "slider slider";
+    gap: 8px 12px;
+    align-items:center;
+  }
 
-.row .label{ grid-area: label; }
-.row .pct{ grid-area: pct; }
-.row input[type=range]{ grid-area: slider; width:100%; margin:0; padding:0; }
-  .label{font-weight:600}
-  .pct{min-width:60px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+  .row .label{ grid-area: label; }
+  .row .pct{ grid-area: pct; }
+  .row input[type=range]{ grid-area: slider; width:100%; margin:0; padding:0; }
+
+  .label{font-weight:700} /* Bold label */
+  .pct{min-width:60px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums;font-weight:500}
   input[type=range]{
-  width:100%;
-  accent-color:var(--accent);
-  margin: 0;              /* removes default margins */
-  padding: 0;             /* removes default padding */
-}
+    width:100%;
+    accent-color:var(--accent);
+    margin: 0;
+    padding: 0;
+  }
 
-  .headline{font-size:36px;font-weight:800;letter-spacing:.2px}
+  .headline{font-size:36px;font-weight:700;letter-spacing:.2px}
   .good{color:var(--good)}
   .bad{color:var(--bad)}
   .toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
   button{
+    font-family: "Quasimoda", Arial, sans-serif; /* ensure buttons use it too */
+    font-weight:700;
     background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.03));
     border:1px solid var(--border);color:var(--text);border-radius:12px;padding:8px 10px;cursor:pointer
   }
@@ -75,7 +111,12 @@ p.sub{margin:0 0 14px;color:var(--muted);font-size:16px; line-height:1.35}
 <div class="wrap">
   <section class="card" aria-labelledby="sim-title">
     <h2 id="sim-title">Downtown Visits: Transit Sensitivity Simulator<br>(Month over Month)</h2>
-    <p class="sub"> Explore how changes in regional transit ridership are historically associated with changes in downtown visitation. <br> Slide BART Ridership / Ferry Ridership / Bridge Crossings monthly % changes to see the estimated % change in visits to the district. <br> <br> </p>
+    <p class="sub">
+      Explore how changes in regional transit ridership are historically associated with changes in downtown visitation.
+      <br>
+      Slide BART Ridership / Ferry Ridership / Bridge Crossings monthly % changes to see the estimated % change in visits to the district.
+      <br><br>
+    </p>
 
     <div class="grid" role="group" aria-label="Sliders">
       <div class="row">
@@ -106,18 +147,18 @@ p.sub{margin:0 0 14px;color:var(--muted);font-size:16px; line-height:1.35}
     </div>
 
     <p class="sub" style="margin-top:8px">
-     <br> *MUNI ridership was excluded from the model because it lacked independent explanatory power. Most of its variation is explained by other transit variables, thus it was dropped by the LASSO regression.<br><br>
+      <br> *MUNI ridership was excluded from the model because it lacked independent explanatory power. Most of its variation is explained by other transit variables, thus it was dropped by the LASSO regression.<br><br>
       **These are associational elasticities; not causal, based on historical data from 2020 to 2025. <br><br>
-	***Sliders stop at −99% (not −100%) because the model is log-based and requires positive values (a full −100% would imply zero ridership/crossings, which is outside the model’s valid range).
-
+      ***Sliders stop at −99% (not −100%) because the model is log-based and requires positive values (a full −100% would imply zero ridership/crossings, which is outside the model’s valid range).
     </p>
   </section>
 </div>
 
 <script>
   const A_BART   = 0.327722;   // ln_bart
-const B_FERRY  = 0.010648;   // ln_ferry
-const C_BRIDGE = 0.075311;  // ln_bridge
+  const B_FERRY  = 0.010648;   // ln_ferry
+  const C_BRIDGE = 0.075311;   // ln_bridge
+
   const $ = (id)=>document.getElementById(id);
   const bart=$("bart"), ferry=$("ferry"), bridge=$("bridge");
   const bartPct=$("bartPct"), ferryPct=$("ferryPct"), bridgePct=$("bridgePct");
@@ -129,14 +170,18 @@ const C_BRIDGE = 0.075311;  // ln_bridge
     ferryPct.textContent = `${Number(ferry.value)}%`;
     bridgePct.textContent = `${Number(bridge.value)}%`;
   }
+
   function compute(){
     const dB = Number(bart.value)/100, dF = Number(ferry.value)/100, dR = Number(bridge.value)/100;
     const multiplier = Math.pow(1+dB, A_BART) * Math.pow(1+dF, B_FERRY) * Math.pow(1+dR, C_BRIDGE);
     const pct = (multiplier - 1) * 100;
+
     headline.classList.toggle('good', pct >= 0);
     headline.classList.toggle('bad', pct < 0);
+
     headline.textContent = `Estimated change in Visits: ${pct>=0?'+':''}${fmt1.format(pct)}%`;
   }
+
   function setPreset(v){
     bart.value = v.bart ?? 0;
     ferry.value = v.ferry ?? 0;
@@ -151,6 +196,7 @@ const C_BRIDGE = 0.075311;  // ln_bridge
   $("reset").addEventListener('click', ()=> setPreset({bart:0,ferry:0,bridge:0}));
 
   [bart,ferry,bridge].forEach(el=> el.addEventListener('input', ()=>{updateBadges();compute();}));
+
   updateBadges(); compute();
 </script>
 
