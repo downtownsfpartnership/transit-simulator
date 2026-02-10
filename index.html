@@ -1,0 +1,157 @@
+<style>
+  .sim-wrap{
+  background:
+    radial-gradient(900px 600px at 15% -10%, #3a2a7a 0, transparent 60%),
+    radial-gradient(900px 600px at 85% 110%, #361e74 0, transparent 60%),
+    linear-gradient(180deg,#2b101b,#2a1758);
+  padding: 20px;
+  border-radius: 16px;
+
+  margin-top: 120px;   /* <-- add this */
+}
+</style>
+
+<div class="sim-wrap">
+  <style>
+  :root{
+    --bg1:#2b101b;
+    --bg2:#2a1758;
+    --panel:#251748;
+    --text:#f2edff;
+    --muted:#c9bff0;
+    --accent:#a887ff;
+    --good:#69dd8c;
+    --bad:#ff7a8a;
+    --ring: rgba(168,135,255,.35);
+    --border: rgba(255,255,255,.10);
+    --shadow: 0 10px 30px rgba(0,0,0,.35);
+  }
+
+  .wrap{width:min(760px,100%); margin: 0 auto;}
+  .card{
+    background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.02));
+    border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);
+    padding:16px; color: var(--text);
+  }
+  h2{margin:0 0 10px;font-size:30px;letter-spacing:.2px; line-height:1.15}
+p.sub{margin:0 0 14px;color:var(--muted);font-size:16px; line-height:1.35}
+  .grid{display:grid;gap:12px}
+  .row{
+  display:grid;
+  grid-template-columns: 1fr auto;   /* label | % */
+  grid-template-areas:
+    "label pct"
+    "slider slider";
+  gap: 8px 12px;
+  align-items:center;
+}
+
+.row .label{ grid-area: label; }
+.row .pct{ grid-area: pct; }
+.row input[type=range]{ grid-area: slider; width:100%; margin:0; padding:0; }
+  .label{font-weight:600}
+  .pct{min-width:60px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+  input[type=range]{
+  width:100%;
+  accent-color:var(--accent);
+  margin: 0;              /* removes default margins */
+  padding: 0;             /* removes default padding */
+}
+
+  .headline{font-size:36px;font-weight:800;letter-spacing:.2px}
+  .good{color:var(--good)}
+  .bad{color:var(--bad)}
+  .toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+  button{
+    background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.03));
+    border:1px solid var(--border);color:var(--text);border-radius:12px;padding:8px 10px;cursor:pointer
+  }
+  button:hover{border-color:var(--accent);box-shadow:0 0 0 6px var(--ring)}
+  button:active{transform:translateY(1px) scale(.995)}
+  .grid[role="group"]{ margin-bottom: 40px; }
+  #headline{ margin-top: 25px; margin-bottom: 35px; }
+</style>
+
+<div class="wrap">
+  <section class="card" aria-labelledby="sim-title">
+    <h2 id="sim-title">Downtown Visits: Transit Sensitivity Simulator<br>(Month over Month)</h2>
+    <p class="sub"> Explore how changes in regional transit ridership are historically associated with changes in downtown visitation. <br> Slide BART Ridership / Ferry Ridership / Bridge Crossings monthly % changes to see the estimated % change in visits to the district. <br> <br> </p>
+
+    <div class="grid" role="group" aria-label="Sliders">
+      <div class="row">
+        <label class="label" for="bart">BART Ridership</label>
+        <span id="bartPct" class="pct">0%</span>
+        <input id="bart" type="range" min="-99" max="100" step="1" value="0">
+      </div>
+      <div class="row">
+        <label class="label" for="ferry">Ferry Ridership</label>
+        <span id="ferryPct" class="pct">0%</span>
+        <input id="ferry" type="range" min="-99" max="100" step="1" value="0">
+      </div>
+      <div class="row">
+        <label class="label" for="bridge">Bridge Crossings</label>
+        <span id="bridgePct" class="pct">0%</span>
+        <input id="bridge" type="range" min="-99" max="100" step="1" value="0">
+      </div>
+    </div>
+
+    <div id="headline" class="headline good">Estimated change: +0.0%</div>
+
+    <div class="toolbar" aria-label="Presets">
+      <button id="presetRail" type="button">Rail disruption</button>
+      <button id="presetStorm" type="button">Stormy weather</button>
+      <button id="presetHoliday" type="button">Bridge holiday traffic</button>
+      <button id="presetUplift" type="button">Coordinated uplift</button>
+      <button id="reset" type="button">Reset</button>
+    </div>
+
+    <p class="sub" style="margin-top:8px">
+     <br> *MUNI ridership was excluded from the model because it lacked independent explanatory power. Most of its variation is explained by other transit variables, thus it was dropped by the LASSO regression.<br><br>
+      **These are associational elasticities; not causal, based on historical data from 2020 to 2025. <br><br>
+	***Sliders stop at −99% (not −100%) because the model is log-based and requires positive values (a full −100% would imply zero ridership/crossings, which is outside the model’s valid range).
+
+    </p>
+  </section>
+</div>
+
+<script>
+  const A_BART   = 0.327722;   // ln_bart
+const B_FERRY  = 0.010648;   // ln_ferry
+const C_BRIDGE = 0.075311;  // ln_bridge
+  const $ = (id)=>document.getElementById(id);
+  const bart=$("bart"), ferry=$("ferry"), bridge=$("bridge");
+  const bartPct=$("bartPct"), ferryPct=$("ferryPct"), bridgePct=$("bridgePct");
+  const headline=$("headline");
+  const fmt1 = new Intl.NumberFormat(undefined,{maximumFractionDigits:1});
+
+  function updateBadges(){
+    bartPct.textContent = `${Number(bart.value)}%`;
+    ferryPct.textContent = `${Number(ferry.value)}%`;
+    bridgePct.textContent = `${Number(bridge.value)}%`;
+  }
+  function compute(){
+    const dB = Number(bart.value)/100, dF = Number(ferry.value)/100, dR = Number(bridge.value)/100;
+    const multiplier = Math.pow(1+dB, A_BART) * Math.pow(1+dF, B_FERRY) * Math.pow(1+dR, C_BRIDGE);
+    const pct = (multiplier - 1) * 100;
+    headline.classList.toggle('good', pct >= 0);
+    headline.classList.toggle('bad', pct < 0);
+    headline.textContent = `Estimated change in Visits: ${pct>=0?'+':''}${fmt1.format(pct)}%`;
+  }
+  function setPreset(v){
+    bart.value = v.bart ?? 0;
+    ferry.value = v.ferry ?? 0;
+    bridge.value = v.bridge ?? 0;
+    updateBadges(); compute();
+  }
+
+  $("presetRail").addEventListener('click', ()=> setPreset({bart:-20,ferry:0,bridge:0}));
+  $("presetStorm").addEventListener('click', ()=> setPreset({bart:0,ferry:-25,bridge:0}));
+  $("presetHoliday").addEventListener('click', ()=> setPreset({bart:0,ferry:0,bridge:10}));
+  $("presetUplift").addEventListener('click', ()=> setPreset({bart:10,ferry:10,bridge:5}));
+  $("reset").addEventListener('click', ()=> setPreset({bart:0,ferry:0,bridge:0}));
+
+  [bart,ferry,bridge].forEach(el=> el.addEventListener('input', ()=>{updateBadges();compute();}));
+  updateBadges(); compute();
+</script>
+
+</div>
