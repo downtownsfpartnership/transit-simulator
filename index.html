@@ -16,7 +16,6 @@
 
   /* ===== Simulator wrapper ===== */
   .sim-wrap{
-    /* Apply Quasimoda ONLY to simulator */
     font-family: "Quasimoda", Arial, sans-serif;
 
     background:
@@ -146,11 +145,6 @@
       <button id="reset" type="button">Reset</button>
     </div>
 
-    <p class="sub" style="margin-top:8px">
-      <br> *MUNI ridership was excluded from the model because it lacked independent explanatory power. Most of its variation is explained by other transit variables, thus it was dropped by the LASSO regression.<br><br>
-      **These are associational elasticities; not causal, based on historical data from 2020 to 2025. <br><br>
-      ***Sliders stop at −99% (not −100%) because the model is log-based and requires positive values (a full −100% would imply zero ridership/crossings, which is outside the model’s valid range).
-    </p>
   </section>
 </div>
 
