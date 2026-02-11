@@ -45,45 +45,60 @@
   }
 
   .wrap{width:min(760px,100%); margin: 0 auto;}
+
   .card{
     background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.02));
-    border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);
-    padding:12px; color: var(--text);
+    border:1px solid var(--border);
+    border-radius:16px;
+    box-shadow:var(--shadow);
+    padding:12px;
+    color: var(--text);
   }
 
   /* Use Quasimoda weights explicitly */
-  h2{
+  .sim-wrap h2{
     margin:0 0 10px;
     font-size:24px;
     letter-spacing:.2px;
     line-height:1.15;
-    font-weight:700; /* Bold face */
+    font-weight:700;
   }
-  p.sub{
+  .sim-wrap p.sub{
     margin:0 0 10px;
     color:var(--muted);
     font-size:14px;
     line-height:1.35;
-    font-weight:500; /* Medium face */
+    font-weight:500;
   }
 
-  .grid{display:grid;gap:12px; margin-top:32px !important;}
+  /* spacing before sliders */
+  .sim-wrap .grid{
+    display:grid;
+    gap:12px;
+    margin-top: 18px !important; /* space between text + sliders */
+  }
+
   .row{
     display:grid;
-    grid-template-columns: 1fr auto;   /* label | % */
+    grid-template-columns: 1fr auto;
     grid-template-areas:
       "label pct"
       "slider slider";
     gap: 8px 12px;
     align-items:center;
   }
-
   .row .label{ grid-area: label; }
   .row .pct{ grid-area: pct; }
   .row input[type=range]{ grid-area: slider; width:100%; margin:0; padding:0; }
 
-  .label{font-weight:700} /* Bold label */
-  .pct{min-width:60px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums;font-weight:500}
+  .label{font-weight:700}
+  .pct{
+    min-width:60px;
+    text-align:right;
+    color:var(--muted);
+    font-variant-numeric:tabular-nums;
+    font-weight:500;
+  }
   input[type=range]{
     width:100%;
     accent-color:var(--accent);
@@ -91,34 +106,45 @@
     padding: 0;
   }
 
-  .headline{font-size:22px;font-weight:700;letter-spacing:0px; line-height:1;}
+  .sim-wrap #headline{
+    font-size: 25px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.2px !important;
+    line-height: 1.6 !important;
+    margin-top: 12px !important;
+    margin-bottom: 18px !important;
+  }
+
   .good{color:var(--good)}
   .bad{color:var(--bad)}
+
   .toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
   button{
-    font-family: "Quasimoda", Arial, sans-serif; /* ensure buttons use it too */
+    font-family: "Quasimoda", Arial, sans-serif;
     font-weight:700;
     background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.03));
-    border:1px solid var(--border);color:var(--text);border-radius:12px;padding:8px 10px;cursor:pointer
+    border:1px solid var(--border);
+    color:var(--text);
+    border-radius:12px;
+    padding:8px 10px;
+    cursor:pointer
   }
   button:hover{border-color:var(--accent);box-shadow:0 0 0 6px var(--ring)}
   button:active{transform:translateY(1px) scale(.995)}
-  .grid[role="group"]{ margin-bottom: 40px; }
-  #headline{ margin-top: 25px; margin-bottom: 35px; }
+  .grid[role="group"]{ margin-bottom: 18px; } /* reduce extra space under sliders */
 </style>
 
 <div class="wrap">
   <section class="card" aria-labelledby="sim-title">
     <h2 id="sim-title">Downtown Visits: Transit Sensitivity Simulator<br>(MoM)</h2>
-    <p class="sub" style="margin-bottom:12px;">
-  Explore how changes in regional transit ridership are historically associated with changes in downtown visitation.
-</p>
 
-<p class="sub" style="margin-bottom:0px;">
-  Slide BART Ridership / Ferry Ridership / Bridge Crossings monthly % changes to see the estimated % change in visits to the district.
-</p>
+    <p class="sub" style="margin-bottom:10px;">
+      Explore how changes in regional transit ridership are historically associated with changes in downtown visitation.
+    </p>
 
-
+    <p class="sub" style="margin-bottom:0px;">
+      Slide BART Ridership / Ferry Ridership / Bridge Crossings monthly % changes to see the estimated % change in visits to the district.
+    </p>
 
     <div class="grid" role="group" aria-label="Sliders">
       <div class="row">
@@ -126,11 +152,13 @@
         <span id="bartPct" class="pct">0%</span>
         <input id="bart" type="range" min="-99" max="100" step="1" value="0">
       </div>
+
       <div class="row">
         <label class="label" for="ferry">Ferry Ridership</label>
         <span id="ferryPct" class="pct">0%</span>
         <input id="ferry" type="range" min="-99" max="100" step="1" value="0">
       </div>
+
       <div class="row">
         <label class="label" for="bridge">Bridge Crossings</label>
         <span id="bridgePct" class="pct">0%</span>
@@ -138,7 +166,7 @@
       </div>
     </div>
 
-    <div id="headline" class="headline good">Estimated change: +0.0%</div>
+    <div id="headline" class="good">Estimated change: +0.0%</div>
 
     <div class="toolbar" aria-label="Presets">
       <button id="presetRail" type="button">Rail disruption</button>
@@ -147,7 +175,6 @@
       <button id="presetUplift" type="button">Coordinated uplift</button>
       <button id="reset" type="button">Reset</button>
     </div>
-
   </section>
 </div>
 
