@@ -223,5 +223,19 @@
 
   updateBadges(); compute();
 </script>
+<script>
+  function sendHeight(){
+    const h = document.documentElement.scrollHeight;
+    window.parent.postMessage({ type: "SIM_HEIGHT", height: h }, "*");
+  }
 
+  // initial + on resize
+  window.addEventListener("load", sendHeight);
+  window.addEventListener("resize", sendHeight);
+
+  // also call after slider interaction (content can reflow slightly)
+  document.addEventListener("input", () => {
+    window.requestAnimationFrame(sendHeight);
+  });
+</script>
 </div>
